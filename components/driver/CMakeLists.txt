@@ -4,6 +4,7 @@ idf_component_register(
         "src/max6675.c"
         "src/wifi_manager.c"
         "src/prox_sensor.c"
+        "src/sim808.c"
     INCLUDE_DIRS
         "include"
     REQUIRES
