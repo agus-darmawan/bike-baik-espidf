@@ -2,6 +2,8 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
+static const char *TAG = TAG;
+
 // SPI handle
 static spi_device_handle_t spi;
 
@@ -30,17 +32,17 @@ esp_err_t max6675_init(void) {
 
     ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
     if (ret != ESP_OK) {
-        ESP_LOGE("MAX6675", "Failed to initialize SPI bus");
+        ESP_LOGE(TAG, "Failed to initialize SPI bus");
         return ret;
     }
 
     ret = spi_bus_add_device(SPI2_HOST, &devcfg, &spi);
     if (ret != ESP_OK) {
-        ESP_LOGE("MAX6675", "Failed to add SPI device");
+        ESP_LOGE(TAG, "Failed to add SPI device");
         return ret;
     }
 
-    ESP_LOGI("MAX6675", "MAX6675 initialized successfully");
+    ESP_LOGI(TAG, "MAX6675 initialized successfully");
     return ESP_OK;
 }
 
@@ -63,7 +65,7 @@ float max6675_read_temperature(void) {
 
     ret = spi_device_transmit(spi, &trans);
     if (ret != ESP_OK) {
-        ESP_LOGE("MAX6675", "Failed to read from MAX6675");
+        ESP_LOGE(TAG, "Failed to read from MAX6675");
         return -1.0f; // Error reading data
     }
 
@@ -71,6 +73,6 @@ float max6675_read_temperature(void) {
     int raw_value = ((data[0] << 8) | data[1]) >> 3;
     float temperature = raw_value * 0.25; // MAX6675 provides 0.25°C resolution
 
-    ESP_LOGI("MAX6675", "Temperature: %.2f°C", temperature);
+    ESP_LOGI(TAG, "Temperature: %.2f°C", temperature);
     return temperature;
 }
