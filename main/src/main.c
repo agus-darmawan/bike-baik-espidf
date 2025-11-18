@@ -3,4 +3,5 @@
 void app_main(void)
 {
 
+    printf("Hello, ESP32!\n");
 }
