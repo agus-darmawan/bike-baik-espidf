@@ -7,6 +7,10 @@
 static const char *TAG = "WIFI_MANAGER";
 static bool is_connected = false;
 
+/**
+ * Event handler for WiFi events.
+ */
+
 void wifi_event_handler(void *arg, esp_event_base_t event_base,
                         int32_t event_id, void *event_data)
 {
@@ -27,6 +31,12 @@ void wifi_event_handler(void *arg, esp_event_base_t event_base,
         esp_wifi_connect();
     }
 }
+
+/**
+ * Initialize WiFi in station mode and connect to the specified SSID.
+ * @param ssid The SSID of the WiFi network.
+ * @param password The password of the WiFi network.
+ */
 
 void wifi_init_sta(const char *ssid, const char *password)
 {
@@ -72,6 +82,10 @@ void wifi_init_sta(const char *ssid, const char *password)
     ESP_LOGI(TAG, "WiFi init finished. Connecting to %s", ssid);
 }
 
+/**
+ * Check if WiFi is connected.
+ * @return true if connected, false otherwise.
+ */
 bool wifi_is_connected(void)
 {
     return is_connected;
