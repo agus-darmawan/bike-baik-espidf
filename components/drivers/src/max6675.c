@@ -2,7 +2,7 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
-static const char *TAG = TAG;
+static const char *TAG = "MAX6675";
 
 // SPI handle
 static spi_device_handle_t spi;
