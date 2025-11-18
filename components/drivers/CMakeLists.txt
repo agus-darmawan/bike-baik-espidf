@@ -3,6 +3,7 @@ idf_component_register(
         "src/mpu6050.c"
         "src/max6675.c"
         "src/wifi_manager.c"
+        "src/prox_sensor.c"
     INCLUDE_DIRS
         "include"
     REQUIRES
@@ -11,5 +12,6 @@ idf_component_register(
         esp_driver_gpio
         esp_event
         esp_wifi
+        esp_timer
         nvs_flash
 )
