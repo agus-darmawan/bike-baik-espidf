@@ -1,0 +1,33 @@
+# --- ESP-IDF build artifacts ---
+build/
+sdkconfig.old
+sdkconfig.ci
+
+# --- VSCode / IDE stuff ---
+.vscode/
+.idea/
+*.code-workspace
+
+# --- OS junk files ---
+.DS_Store
+Thumbs.db
+
+# --- Python cache ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- Logs / temp ---
+*.log
+*.tmp
+
+# --- CMake junk (kalau ada) ---
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.cmake.in
+
+# --- Backup files ---
+*~
+*.swp
+*.swo
