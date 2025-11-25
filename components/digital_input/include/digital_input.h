@@ -1,3 +1,12 @@
+/**
+ * @file digital_input.h
+ * @author @agus-darmawan
+ * @brief This file contains the interface for a digital input sensor module
+ * @version 0.1
+ * @date 2025-11-25
+ * @copyright Copyright (c) 2025
+ */
+
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
@@ -21,7 +30,7 @@ typedef struct {
  * @brief Initialize digital input sensor.
  * 
  * @param cfg Pointer to configuration structure
- * @return ESP_OK on success
+ * @return ESP_OK on success 
  */
 esp_err_t digital_input_init(const digital_input_config_t *cfg);
 
