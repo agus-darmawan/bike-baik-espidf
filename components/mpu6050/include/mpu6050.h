@@ -1,3 +1,13 @@
+/**
+ * @file mpu6050.h
+ * @author @agus-darmawan
+ * @brief  This file contains the interface for the MPU6050 IMU sensor module
+ * @version 0.1
+ * @date 2025-11-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>

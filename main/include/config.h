@@ -1,18 +1,8 @@
-/**
- * @file config.h
- * @author @agus-darmawan
- * @brief This file contains configuration macros for various sensors
- * @version 0.1
- * @date 2025-11-25
- * 
- * @copyright Copyright (c) 2025
- * 
- */
-
 #pragma once
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
 #include "driver/i2c.h"
+#include "driver/uart.h"
 #include "esp_adc/adc_oneshot.h"
 
 /* ===== MAX6675 Temperature Sensor ===== */
@@ -45,3 +35,34 @@
 #define VOLTAGE_R1         10000.0f       /* Upper resistor (ohms) */
 #define VOLTAGE_R2         10000.0f       /* Lower resistor (ohms) */
 #define VOLTAGE_SAMPLES    10             /* Number of samples to average */
+
+/* ===== SIM808 GPS/GPRS Module ===== */
+#define SIM808_UART_PORT   UART_NUM_2
+#define SIM808_TX_PIN      GPIO_NUM_17
+#define SIM808_RX_PIN      GPIO_NUM_16
+#define SIM808_PWR_PIN     GPIO_NUM_4      /* Power control pin */
+#define SIM808_RST_PIN     -1              /* Reset pin (not used) */
+#define SIM808_BAUD_RATE   9600
+
+/* Network Configuration */
+#define SIM808_APN         "internet"      /* Change to your APN */
+#define SIM808_APN_USER    NULL            /* APN username if required */
+#define SIM808_APN_PASS    NULL            /* APN password if required */
+
+/* RabbitMQ Configuration */
+#define RABBITMQ_BROKER    "http://your-rabbitmq-server.com:15672"
+#define RABBITMQ_USERNAME  "guest"
+#define RABBITMQ_PASSWORD  "guest"
+#define RABBITMQ_TOPIC     "bike-performance"
+
+/* API Server for Vehicle Parameters */
+#define API_SERVER_URL     "http://your-api-server.com/api"
+
+/* ===== Vehicle Parameters ===== */
+#define VEHICLE_WHEELBASE_DEFAULT  1.3f    /* Default wheelbase in meters */
+#define VEHICLE_WHEEL_CIRCUMFERENCE_DEFAULT 1.8f  /* Default wheel circumference in meters */
+#define VEHICLE_MASS_DEFAULT       150.0f  /* Default vehicle + rider mass in kg */
+
+/* ===== Trip Management ===== */
+#define BATTERY_VOLTAGE_ENGINE_ON   12.2f  /* Voltage threshold for engine ON */
+#define TRIP_UPDATE_INTERVAL_MS     1000   /* Update interval in milliseconds */

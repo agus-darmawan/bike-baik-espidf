@@ -12,4 +12,4 @@ void sensor_tasks_start(void);
 
 #ifdef __cplusplus
 }
-#endif
+#endifx

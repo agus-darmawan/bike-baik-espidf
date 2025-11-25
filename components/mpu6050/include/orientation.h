@@ -1,3 +1,13 @@
+/**
+ * @file orientation.h
+ * @author @agus-darmawan
+ * @brief This file contains the interface for Mahony and Madgwick orientation filters
+ * @version 0.1
+ * @date 2025-11-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #pragma once
 
 #ifdef __cplusplus
