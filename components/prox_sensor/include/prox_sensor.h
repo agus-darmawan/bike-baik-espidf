@@ -28,6 +28,7 @@ typedef struct {
 
 /**
  * @brief Initialize proximity opto sensor (ISR).
+ * 
  * @param cfg pointer to config
  * @return ESP_OK on success
  */
@@ -35,6 +36,7 @@ esp_err_t proximity_init(const proximity_config_t *cfg);
 
 /**
  * @brief Return total pulses since boot (one pulse = one wheel revolution).
+ * 
  * @return pulse count
  */
 uint32_t proximity_get_count(void);

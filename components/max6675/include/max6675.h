@@ -19,6 +19,7 @@ extern "C" {
 
 /**
  * @brief Initialize MAX6675 sensor.
+ * 
  * @param host SPI host (e.g., SPI2_HOST)
  * @param clk_pin SCLK gpio
  * @param miso_pin MISO gpio
@@ -36,6 +37,7 @@ esp_err_t max6675_init(spi_host_device_t host,
 
 /**
  * @brief Read temperature in Celsius. Returns a negative large value on error.
+ * 
  * @return Temperature in °C, or negative value on error
  */
 float max6675_read_temperature(void);
