@@ -12,7 +12,7 @@ void app_main(void)
 
     while (1) {
         sensor_data_t d = sensor_manager_get_data();
-        ESP_LOGI(TAG, "Temp: %.2f C", d.temperature_c);
+        ESP_LOGI(TAG, "Temp: %.2f C | Count: %u | RPM: %.2f", d.temperature_c, d.wheel_count, d.rpm);
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
