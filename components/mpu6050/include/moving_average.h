@@ -1,5 +1,15 @@
-#pragma once
+/**
+ * @file moving_average.h
+ * @author @agus-darmawan
+ * @brief This file contains the interface for moving average and low-pass filter functions
+ * @version 0.1
+ * @date 2025-11-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 
+#pragma once
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -8,8 +18,11 @@ extern "C" {
 
 typedef float float32_t; 
 
+/**
+ * @brief Moving average filter structure
+ */
 typedef struct {
-    float *buf;
+    float *buf; 
     size_t size;
     size_t index;
     float sum;
@@ -17,7 +30,8 @@ typedef struct {
 } movavg_t;
 
 /**
- * Initialize moving average filter.
+ * @brief  moving average filter.
+ * 
  * @param m Pointer to moving average structure
  * @param buffer Pointer to float buffer
  * @param size Size of buffer
@@ -25,7 +39,8 @@ typedef struct {
 void movavg_init(movavg_t *m, float *buffer, size_t size);
 
 /**
- * Update moving average with new sample.
+ * @brief Update moving average with new sample.
+ * 
  * @param m Pointer to moving average structure
  * @param x New sample value
  * @return Filtered output
@@ -33,7 +48,8 @@ void movavg_init(movavg_t *m, float *buffer, size_t size);
 float32_t movavg_update(movavg_t *m, float x);
 
 /**
- * First-order low-pass filter update.
+ * @brief First-order low-pass filter update.
+ * 
  * @param prev Previous filtered value
  * @param input Current input value
  * @param alpha Filter coefficient (0..1), higher = less filtering
