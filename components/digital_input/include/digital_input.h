@@ -30,7 +30,7 @@ typedef struct {
  * @brief Initialize digital input sensor.
  * 
  * @param cfg Pointer to configuration structure
- * @return ESP_OK on success 
+ * @return ESP_OK on success or error code
  */
 esp_err_t digital_input_init(const digital_input_config_t *cfg);
 

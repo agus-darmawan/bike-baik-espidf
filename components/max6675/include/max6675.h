@@ -1,3 +1,12 @@
+/**
+ * @file max6675.h
+ * @author @agus-darmawan
+ * @brief This file contains the interface for the MAX6675 thermocouple temperature sensor module
+ * @version 0.1
+ * @date 2025-11-25
+ * @copyright Copyright (c) 2025
+ */
+
 #pragma once
 #include "esp_err.h"
 #include "driver/gpio.h"
@@ -9,14 +18,14 @@ extern "C" {
 #endif
 
 /**
- * Initialize MAX6675.
+ * @brief Initialize MAX6675 sensor.
  * @param host SPI host (e.g., SPI2_HOST)
  * @param clk_pin SCLK gpio
  * @param miso_pin MISO gpio
  * @param cs_pin CS gpio
  * @param hz SPI clock speed
  * @param spi_sem Optional pointer to a binary semaphore to protect shared SPI bus (can be NULL)
- * @return ESP_OK on success
+ * @return ESP_OK on success or error code
  */
 esp_err_t max6675_init(spi_host_device_t host,
                       gpio_num_t clk_pin,
@@ -26,7 +35,7 @@ esp_err_t max6675_init(spi_host_device_t host,
                       SemaphoreHandle_t spi_sem);
 
 /**
- * Read temperature in Celsius. Returns a negative large value on error.
+ * @brief Read temperature in Celsius. Returns a negative large value on error.
  * @return Temperature in °C, or negative value on error
  */
 float max6675_read_temperature(void);
