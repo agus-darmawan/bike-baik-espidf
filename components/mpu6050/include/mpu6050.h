@@ -1,5 +1,4 @@
 #pragma once
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "driver/i2c.h"
@@ -9,62 +8,51 @@
 extern "C" {
 #endif
 
-typedef float float32_t;
-
 #define MPU6050_DEFAULT_I2C_PORT I2C_NUM_0
 #define MPU6050_DEFAULT_SDA_PIN  21
 #define MPU6050_DEFAULT_SCL_PIN  22
 #define MPU6050_DEFAULT_ADDR     0x68
 
-typedef enum {
-    MPU6050_FILTER_NONE,      // No filtering
-    MPU6050_FILTER_LOWPASS,   // Low-pass filter only
-    MPU6050_FILTER_MOVAVG,    // Moving average only
-    MPU6050_FILTER_BOTH       // Both filters applied
-} mpu6050_filter_t;
-
-typedef enum {
-    MPU6050_ORIENTATION_NONE,      // No orientation calculation
-    MPU6050_ORIENTATION_MAHONY,    // Mahony filter
-    MPU6050_ORIENTATION_MADGWICK   // Madgwick filter
-} mpu6050_orientation_t;
-
+/**
+ * @brief MPU6050 sensor data structure
+ */
 typedef struct {
-    float32_t ax, ay, az;              // Filtered acceleration in m/s^2
-    float32_t gx, gy, gz;              // Gyro in rad/s (offset-corrected)
-    float32_t raw_ax, raw_ay, raw_az;  // Raw accel in g
-    float32_t raw_gx, raw_gy, raw_gz;  // Raw gyro in dps
-    float32_t roll, pitch, yaw;        // Orientation in degrees
+    float ax, ay, az;           /**< Filtered accelerometer (m/s^2) */
+    float gx, gy, gz;           /**< Filtered gyroscope (rad/s) */
+    float raw_ax, raw_ay, raw_az; /**< Raw accelerometer (g) */
+    float raw_gx, raw_gy, raw_gz; /**< Raw gyroscope (deg/s) */
 } mpu6050_data_t;
 
+/**
+ * @brief MPU6050 gyroscope calibration data
+ */
 typedef struct {
-    float32_t offset_x;
-    float32_t offset_y;
-    float32_t offset_z;
-    bool calibrated;
+    float offset_x, offset_y, offset_z; /**< Gyro offsets */
+    bool calibrated;                     /**< Calibration status */
 } mpu6050_gyro_calib_t;
 
 /**
- * Initialize MPU6050 sensor over I2C.
+ * @brief Initialize MPU6050 sensor.
+ * 
  * @param port I2C port number
  * @param sda_pin SDA GPIO pin
  * @param scl_pin SCL GPIO pin
- * @param addr I2C device address
- * @return ESP_OK on success, ESP_FAIL on failure
+ * @param addr I2C device address (typically 0x68)
+ * @return ESP_OK on success
  */
 esp_err_t mpu6050_init(i2c_port_t port, int sda_pin, int scl_pin, uint8_t addr);
 
 /**
- * Read accelerometer and gyroscope data from MPU6050.
- * Automatically calculates orientation if enabled.
- * @param out Pointer to data structure
- * @return ESP_OK on success, ESP_FAIL on failure
+ * @brief Read MPU6050 sensor data.
+ * 
+ * @param out Pointer to data structure to store results
+ * @return ESP_OK on success
  */
 esp_err_t mpu6050_read(mpu6050_data_t *out);
 
 /**
- * Calibrate gyroscope offsets.
- * Keep sensor stationary during calibration.
+ * @brief Calibrate gyroscope offsets.
+ * 
  * @param calib Pointer to calibration structure
  * @param samples Number of samples to average
  * @param delay_ms Delay between samples in milliseconds
@@ -72,20 +60,12 @@ esp_err_t mpu6050_read(mpu6050_data_t *out);
 void mpu6050_calibrate_gyro(mpu6050_gyro_calib_t *calib, int samples, int delay_ms);
 
 /**
- * Configure accelerometer filter type and parameters.
- * @param filter Filter type selection
- * @param lp_alpha Low-pass filter alpha coefficient (0..1), ignored if not using lowpass
- * @param movavg_size Moving average window size (max 16), ignored if not using movavg
+ * @brief Configure digital filters for sensor readings.
+ * 
+ * @param lp_alpha Low-pass filter coefficient (0.0 to 1.0)
+ * @param movavg_size Moving average window size
  */
-void mpu6050_set_filter(mpu6050_filter_t filter, float32_t lp_alpha, int movavg_size);
-
-/**
- * Configure orientation filter type and parameters.
- * @param orientation Orientation filter selection (NONE, MAHONY, MADGWICK)
- * @param param1 Mahony Kp / Madgwick beta
- * @param param2 Mahony Ki (ignored for Madgwick)
- */
-void mpu6050_set_orientation(mpu6050_orientation_t orientation, float32_t param1, float32_t param2);
+void mpu6050_set_filters(float lp_alpha, int movavg_size);
 
 #ifdef __cplusplus
 }

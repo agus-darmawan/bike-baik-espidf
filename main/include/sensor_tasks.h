@@ -4,7 +4,10 @@
 extern "C" {
 #endif
 
-/* start tasks (if not using sensor_manager_start_tasks) */
+/**
+ * @brief Start all sensor reading tasks.
+ * Creates FreeRTOS tasks for each sensor type.
+ */
 void sensor_tasks_start(void);
 
 #ifdef __cplusplus
