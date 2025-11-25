@@ -123,6 +123,13 @@ void sensor_manager_start_tasks(void)
     sensor_tasks_start();
 }
 
+
+
+/**
+ * @brief  Update temperature reading in a thread-safe manner using mutex.
+ * 
+ * @param temp_c 
+ */
 void sensor_manager_update_temp(float temp_c)
 {
     if (xSemaphoreTake(data_mutex, pdMS_TO_TICKS(20))) {
@@ -131,6 +138,12 @@ void sensor_manager_update_temp(float temp_c)
     }
 }
 
+/**
+ * @brief  Update proximity sensor data in a thread-safe manner using mutex.
+ * 
+ * @param count 
+ * @param rpm 
+ */
 void sensor_manager_update_prox(uint32_t count, float rpm)
 {
     if (xSemaphoreTake(data_mutex, pdMS_TO_TICKS(20))) {
@@ -140,6 +153,16 @@ void sensor_manager_update_prox(uint32_t count, float rpm)
     }
 }
 
+/**
+ * @brief  Update IMU data in a thread-safe manner using mutex.
+ * 
+ * @param ax 
+ * @param ay 
+ * @param az 
+ * @param gx 
+ * @param gy 
+ * @param gz 
+ */
 void sensor_manager_update_imu(float ax, float ay, float az, float gx, float gy, float gz)
 {
     if (xSemaphoreTake(data_mutex, pdMS_TO_TICKS(20))) {
@@ -153,6 +176,13 @@ void sensor_manager_update_imu(float ax, float ay, float az, float gx, float gy,
     }
 }
 
+/**
+ * @brief  Update orientation data in a thread-safe manner using mutex.
+ * 
+ * @param roll 
+ * @param pitch 
+ * @param yaw 
+ */
 void sensor_manager_update_orientation(float roll, float pitch, float yaw)
 {
     if (xSemaphoreTake(data_mutex, pdMS_TO_TICKS(20))) {
@@ -163,6 +193,12 @@ void sensor_manager_update_orientation(float roll, float pitch, float yaw)
     }
 }
 
+/**
+ * @brief  Update digital input data in a thread-safe manner using mutex.
+ * 
+ * @param state 
+ * @param changes 
+ */
 void sensor_manager_update_digital(bool state, uint32_t changes)
 {
     if (xSemaphoreTake(data_mutex, pdMS_TO_TICKS(20))) {
@@ -172,6 +208,11 @@ void sensor_manager_update_digital(bool state, uint32_t changes)
     }
 }
 
+/**
+ * @brief  Update voltage reading in a thread-safe manner using mutex.
+ * 
+ * @param volts 
+ */
 void sensor_manager_update_voltage(float volts)
 {
     if (xSemaphoreTake(data_mutex, pdMS_TO_TICKS(20))) {

@@ -4,7 +4,9 @@
  * @brief This file contains the interface for the MAX6675 thermocouple temperature sensor module
  * @version 0.1
  * @date 2025-11-25
+ * 
  * @copyright Copyright (c) 2025
+ * 
  */
 
 #pragma once

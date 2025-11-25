@@ -1,3 +1,14 @@
+/**
+ * @file voltage_sensor.h
+ * @author @agus-darmawan
+ * @brief This file contains the interface for a voltage sensor module using ADC with voltage divider
+ * @version 0.1
+ * @date 2025-11-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
+
 #pragma once
 #include <stdint.h>
 #include "esp_err.h"

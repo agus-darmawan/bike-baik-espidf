@@ -1,3 +1,14 @@
+/**
+ * @file config.h
+ * @author @agus-darmawan
+ * @brief This file contains configuration macros for various sensors
+ * @version 0.1
+ * @date 2025-11-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
+
 #pragma once
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
