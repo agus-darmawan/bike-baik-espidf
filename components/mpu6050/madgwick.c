@@ -1,4 +1,3 @@
-
 #include "orientation.h"
 #include <math.h>
 
