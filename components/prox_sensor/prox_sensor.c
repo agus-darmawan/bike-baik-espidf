@@ -11,7 +11,7 @@ static volatile uint32_t pulse_count = 0;
 static volatile int64_t last_us = 0;
 static uint32_t g_debounce_us = 0;
 
-// penting!! IDF v6 masih support ini asal include portmacro.h
+// urgent!!! IDF v6 still supports this as long as portmacro.h is included
 static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 static void IRAM_ATTR prox_isr(void *arg)
