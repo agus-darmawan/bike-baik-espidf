@@ -39,6 +39,10 @@ typedef struct {
 
 static sim808_context_t g_ctx = {0};
 
+/* ===== Forward Declarations ===== */
+static esp_err_t sim808_send_at(const char *cmd);
+static esp_err_t sim808_wait_response(const char *expected, uint32_t timeout_ms);
+
 /* ===== Internal Functions ===== */
 
 static void sim808_rx_task(void *arg)
@@ -91,7 +95,9 @@ static esp_err_t sim808_wait_response(const char *expected, uint32_t timeout_ms)
     return ESP_ERR_TIMEOUT;
 }
 
-static esp_err_t sim808_send_at_expect(const char *cmd, const char *expected, uint32_t timeout_ms)
+/* ===== Public/Exported Internal Functions (for http and mqtt modules) ===== */
+
+esp_err_t sim808_send_at_expect(const char *cmd, const char *expected, uint32_t timeout_ms)
 {
     if (xSemaphoreTake(g_ctx.uart_mutex, pdMS_TO_TICKS(1000))) {
         g_ctx.rx_len = 0;
@@ -105,7 +111,7 @@ static esp_err_t sim808_send_at_expect(const char *cmd, const char *expected, ui
     return sim808_wait_response(expected, timeout_ms);
 }
 
-static void sim808_clear_rx_buffer(void)
+void sim808_clear_rx_buffer(void)
 {
     if (xSemaphoreTake(g_ctx.uart_mutex, pdMS_TO_TICKS(100))) {
         g_ctx.rx_len = 0;

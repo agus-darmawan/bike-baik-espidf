@@ -5,6 +5,14 @@
 #include "driver/uart.h"
 #include "esp_adc/adc_oneshot.h"
 
+/* ===== Vehicle Configuration ===== */
+#define VEHICLE_SERIAL_NUMBER  "BIKE-001"  /* Change to your bike's serial number */
+
+/* ===== Alert Detection Thresholds ===== */
+#define ALERT_CRASH_THRESHOLD  30.0f       /* Crash detection threshold (m/s² > 3g) */
+#define ALERT_FALL_THRESHOLD   45.0f       /* Fall detection threshold (degrees) */
+#define ALERT_BUMP_THRESHOLD   20.0f       /* Bump detection threshold (m/s² > 2g) */
+
 /* ===== MAX6675 Temperature Sensor ===== */
 #define MAX6675_SPI_HOST   SPI2_HOST
 #define MAX6675_CLK_PIN    GPIO_NUM_18
@@ -54,6 +62,11 @@
 #define RABBITMQ_USERNAME  "guest"
 #define RABBITMQ_PASSWORD  "guest"
 #define RABBITMQ_TOPIC     "bike-performance"
+
+/* Alert Topics */
+#define RABBITMQ_TOPIC_CRASH   "vehicle.alert.crash"
+#define RABBITMQ_TOPIC_FALL    "vehicle.alert.fall"
+#define RABBITMQ_TOPIC_BUMP    "vehicle.alert.bump"
 
 /* API Server for Vehicle Parameters */
 #define API_SERVER_URL     "http://your-api-server.com/api"

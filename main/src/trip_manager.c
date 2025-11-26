@@ -3,6 +3,7 @@
 #include "sensor_manager.h"
 #include "vehicle_performance.h"
 #include "kalman_filter.h"
+#include "alert_manager.h"
 #include "sim808.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
@@ -36,6 +37,63 @@ static struct {
     // Timing
     TickType_t last_update_time;
 } trip_ctx = {0};
+
+/* ===== Alert Callback ===== */
+
+static void alert_handler(const alert_data_t *alert, void *user_data)
+{
+    ESP_LOGW(TAG, "===== ALERT DETECTED =====");
+    ESP_LOGW(TAG, "Type: %s", alert_type_to_string(alert->type));
+    ESP_LOGW(TAG, "Serial Number: %s", alert->serial_number);
+    ESP_LOGW(TAG, "Location: %.6f, %.6f", alert->latitude, alert->longitude);
+    ESP_LOGW(TAG, "Speed: %.2f m/s", alert->speed);
+    ESP_LOGW(TAG, "Accel: X=%.2f Y=%.2f Z=%.2f m/s²", 
+             alert->accel_x, alert->accel_y, alert->accel_z);
+    ESP_LOGW(TAG, "Orientation: Roll=%.1f Pitch=%.1f Yaw=%.1f°", 
+             alert->roll, alert->pitch, alert->yaw);
+    ESP_LOGW(TAG, "===========================");
+    
+    // Send alert to RabbitMQ
+    char payload[512];
+    int len = snprintf(
+        payload, sizeof(payload),
+        "{"
+        "\"type\":\"%s\","
+        "\"serial_number\":\"%s\","
+        "\"timestamp\":%" PRIu64 ","
+        "\"latitude\":%.6f,"
+        "\"longitude\":%.6f,"
+        "\"speed\":%.2f,"
+        "\"accel_x\":%.2f,"
+        "\"accel_y\":%.2f,"
+        "\"accel_z\":%.2f,"
+        "\"roll\":%.2f,"
+        "\"pitch\":%.2f,"
+        "\"yaw\":%.2f"
+        "}",
+        alert_type_to_string(alert->type),
+        alert->serial_number,
+        alert->timestamp,
+        alert->latitude,
+        alert->longitude,
+        alert->speed,
+        alert->accel_x,
+        alert->accel_y,
+        alert->accel_z,
+        alert->roll,
+        alert->pitch,
+        alert->yaw
+    );
+    
+    const char *topic = alert_type_to_topic(alert->type);
+    
+    esp_err_t ret = sim808_mqtt_publish(topic, payload, len, 1);
+    if (ret == ESP_OK) {
+        ESP_LOGI(TAG, "Alert sent to %s successfully", topic);
+    } else {
+        ESP_LOGE(TAG, "Failed to send alert to %s", topic);
+    }
+}
 
 /* ===== Helper Functions ===== */
 
@@ -96,6 +154,7 @@ static esp_err_t send_performance_data_to_rabbitmq(void)
         payload, sizeof(payload),
         "{"
         "\"trip_id\":\"%s\","
+        "\"serial_number\":\"%s\","
         "\"total_distance_km\":%.2f,"
         "\"average_speed\":%.2f,"
         "\"max_speed\":%.2f,"
@@ -110,6 +169,7 @@ static esp_err_t send_performance_data_to_rabbitmq(void)
         "\"trip_count\":%" PRIu32
         "}",
         perf.order_id,
+        VEHICLE_SERIAL_NUMBER,
         perf.total_distance_km,
         perf.average_speed,
         perf.max_speed,
@@ -185,6 +245,23 @@ static void perform_sensor_fusion(float dt)
     }
 
     kalman_get_state(&trip_ctx.fused_state);
+    
+    // Update alert detection with current sensor data
+    sim808_gps_data_t gps_for_alert;
+    float lat = 0.0f, lon = 0.0f;
+    if (sim808_gps_get_data(&gps_for_alert) == ESP_OK && gps_for_alert.fix_valid) {
+        lat = gps_for_alert.latitude;
+        lon = gps_for_alert.longitude;
+    }
+    
+    float speed = sqrtf(trip_ctx.fused_state.vx * trip_ctx.fused_state.vx +
+                       trip_ctx.fused_state.vy * trip_ctx.fused_state.vy);
+    
+    alert_manager_update(
+        sensors.accel_x, sensors.accel_y, sensors.accel_z,
+        sensors.roll, sensors.pitch, sensors.yaw,
+        speed, lat, lon
+    );
 }
 
 static void update_vehicle_performance(float dt)
@@ -309,8 +386,12 @@ void trip_manager_init(void)
     trip_ctx.vehicle_params.mass = VEHICLE_MASS_DEFAULT;
 
     performance_init();
+    
+    // Initialize alert manager
+    alert_manager_init(VEHICLE_SERIAL_NUMBER);
+    alert_manager_register_callback(alert_handler, NULL);
 
-    ESP_LOGI(TAG, "Trip manager initialized");
+    ESP_LOGI(TAG, "Trip manager initialized (SN: %s)", VEHICLE_SERIAL_NUMBER);
 }
 
 void trip_manager_start(void)
