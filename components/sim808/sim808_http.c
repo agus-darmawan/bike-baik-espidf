@@ -8,7 +8,7 @@ static const char *TAG = "SIM808_HTTP";
 // External declarations from sim808.c
 extern esp_err_t sim808_send_at_expect(const char *cmd, const char *expected, uint32_t timeout_ms);
 extern void sim808_clear_rx_buffer(void);
-extern char *sim808_get_rx_buffer(size_t *len); // Need to add this function
+// extern char *sim808_get_rx_buffer(size_t *len); // Need to add this function
 
 esp_err_t sim808_http_init(void)
 {
@@ -68,18 +68,18 @@ esp_err_t sim808_http_get(const char *url, sim808_http_response_t *response, uin
         return ESP_FAIL;
     }
     
-    // Parse response (simplified - needs proper implementation)
-    size_t rx_len;
-    char *rx_buf = sim808_get_rx_buffer(&rx_len);
-    if (rx_buf && rx_len > 0) {
-        response->data = malloc(rx_len + 1);
-        if (response->data) {
-            memcpy(response->data, rx_buf, rx_len);
-            response->data[rx_len] = '\0';
-            response->data_len = rx_len;
-            response->status_code = 200; // Simplified
-        }
-    }
+    // // Parse response (simplified - needs proper implementation)
+    // size_t rx_len;
+    // char *rx_buf = sim808_get_rx_buffer(&rx_len);
+    // if (rx_buf && rx_len > 0) {
+    //     response->data = malloc(rx_len + 1);
+    //     if (response->data) {
+    //         memcpy(response->data, rx_buf, rx_len);
+    //         response->data[rx_len] = '\0';
+    //         response->data_len = rx_len;
+    //         response->status_code = 200; // Simplified
+    //     }
+    // }
     
     return ESP_OK;
 }

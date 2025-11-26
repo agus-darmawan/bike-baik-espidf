@@ -3,6 +3,7 @@ idf_component_register(
         "src/main.c"
         "src/sensor_manager.c"
         "src/sensor_tasks.c"
+        "src/trip_manager.c"
     INCLUDE_DIRS
         "include"
 )

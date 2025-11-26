@@ -7,4 +7,7 @@ idf_component_register(
     REQUIRES 
         driver
         esp_timer
+        esp_driver_uart
+        esp_driver_gpio
 )
+
