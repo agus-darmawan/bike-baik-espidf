@@ -9,16 +9,16 @@ static vehicle_performance_t perf_data = {0};
 /**
  * Calculate rear tire force based on acceleration and elevation.
  */
-float rear_tire_force(float s_real, float h, float v_start, float v_end, int time) {
-    float result = ((((v_end - v_start) / time) + (GRAVITY * h / s_real)) / A_STANDARD * s_real);
+float rear_tire_force(float s_real, float h, float v_start, float v_end) {
+    float result = ((((v_end - v_start)) + (GRAVITY * h / s_real)) / A_STANDARD * s_real);
     return result;
 }
 
 /**
  * Calculate front brake work based on deceleration and elevation.
  */
-float front_brake_work(float s_real, float h, float v_start, float v_end, int time, float mass, float wheelbase) {
-    float mass_distribution = (0.4 * GRAVITY + (v_start - v_end) / time * 0.55 / wheelbase) / GRAVITY;
+float front_brake_work(float s_real, float h, float v_start, float v_end, float mass, float wheelbase) {
+    float mass_distribution = (0.4 * GRAVITY + (v_start - v_end) * 0.55 / wheelbase) / GRAVITY;
     float normal_mass_distribution = (0.4 * GRAVITY + A_STANDARD * 0.55 / wheelbase) / GRAVITY;
     float result = mass_distribution * ((((v_start - v_end)) - (GRAVITY * h / s_real)) / (normal_mass_distribution * A_STANDARD) * s_real);
     return result;
@@ -100,7 +100,7 @@ void performance_stop_tracking(void) {
 /**
  * Update performance data with new measurement when it is not using brake.
  */
-void performance_without_brake_update(float s_real, float h, float v_end, float temp_machine, int time) {
+void performance_without_brake_update(float s_real, float h, float v_end, float temp_machine) {
     if (!perf_data.is_tracking) {
         return;
     }
@@ -118,14 +118,14 @@ void performance_without_brake_update(float s_real, float h, float v_end, float 
     if (h > 0) {
         if (v_end >= v_start) {
             // Acceleration or constant speed uphill
-            delta_rear_tire = rear_tire_force(s_real, h, v_start, v_end, time);
+            delta_rear_tire = rear_tire_force(s_real, h, v_start, v_end);
         }
     }
     // Downhill (h < 0) and flat road (h = 0)
     else {
         if (v_end > v_start) {
             // Acceleration downhill
-            delta_rear_tire = rear_tire_force(s_real, h, v_start, v_end, time);
+            delta_rear_tire = rear_tire_force(s_real, h, v_start, v_end);
         }
     }
     
@@ -156,7 +156,7 @@ void performance_without_brake_update(float s_real, float h, float v_end, float 
 /**
  * Update performance data with new measurement when it is using brake.
  */
-void performance_with_brake_update(float s_real, float h, float v_end, float temp_machine, int time, float mass, float wheelbase) {
+void performance_with_brake_update(float s_real, float h, float v_end, float temp_machine, float mass, float wheelbase) {
     if (!perf_data.is_tracking) {
         return;
     }
@@ -164,8 +164,8 @@ void performance_with_brake_update(float s_real, float h, float v_end, float tem
     float v_start = perf_data.v_start;
     
     // Initialize deltas
-    float delta_rear_brake = rear_brake_work(s_real, h, v_start, v_end, time, mass, wheelbase);
-    float delta_front_brake = front_brake_work(s_real, h, v_start, v_end, time, mass, wheelbase);
+    float delta_rear_brake = rear_brake_work(s_real, h, v_start, v_end, mass, wheelbase);
+    float delta_front_brake = front_brake_work(s_real, h, v_start, v_end, mass, wheelbase);
     float delta_engine = s_real;
     if(s_real == 0){
         delta_engine = 5
