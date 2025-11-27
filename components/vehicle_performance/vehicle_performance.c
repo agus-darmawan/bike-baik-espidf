@@ -27,8 +27,8 @@ float front_brake_work(float s_real, float h, float v_start, float v_end, int ti
 /**
  * Calculate rear brake work based on deceleration and elevation.
  */
-float rear_brake_work(float s_real, float h, float v_start, float v_end, int time, float mass, float wheelbase) {
-    float mass_distribution = (0.6 * GRAVITY - (v_start - v_end) / time * 0.55 / wheelbase) / GRAVITY;
+float rear_brake_work(float s_real, float h, float v_start, float v_end, float mass, float wheelbase) {
+    float mass_distribution = (0.6 * GRAVITY - (v_start - v_end) * 0.55 / wheelbase) / GRAVITY;
     float normal_mass_distribution = (0.6 * GRAVITY - A_STANDARD * 0.55 / wheelbase) / GRAVITY;
     float result = mass_distribution * ((((v_start - v_end)) - (GRAVITY * h / s_real)) / (normal_mass_distribution * A_STANDARD) * s_real);
     return result;
@@ -37,8 +37,8 @@ float rear_brake_work(float s_real, float h, float v_start, float v_end, int tim
 /**
  * Calculate engine oil wear based on temperature.
  */
-float count_s_oil(float s_real, float temp_machine) {
-    float result = s_real * exp(K_CONSTANT * (temp_machine - T_STANDARD));
+float count_s_oil(float s_real, float h, float temp_machine, float v_start, float v_end) {
+    float result = s_real * exp(K_CONSTANT * (temp_machine - T_STANDARD))*(1 + pow((v_start - v_end),2)/A_STANDARD)*(1 + 0,02 * ((h)/sqrt(pow(h, 2)+pow(s_real,2))));
     return result;
 }
 
@@ -109,6 +109,10 @@ void performance_without_brake_update(float s_real, float h, float v_end, float 
     
     // Initialize deltas
     float delta_rear_tire = s_real;
+    float delta_engine = s_real;
+    if(s_real == 0){
+        delta_engine = 5
+    }
     
     // Uphill (h > 0)
     if (h > 0) {
@@ -129,8 +133,8 @@ void performance_without_brake_update(float s_real, float h, float v_end, float 
     perf_data.s_rear_tire += delta_rear_tire;
     perf_data.s_front_tire += s_real;
     perf_data.s_chain_or_cvt += delta_rear_tire;
-    perf_data.s_engine_oil += count_s_oil(s_real, temp_machine);
-    perf_data.s_engine += s_real;
+    perf_data.s_engine_oil += count_s_oil(s_real, h, temp_machine, v_start, v_end);
+    perf_data.s_engine += delta_engine;
     perf_data.s_air_filter += s_real;
     
     // Update statistics
@@ -162,6 +166,10 @@ void performance_with_brake_update(float s_real, float h, float v_end, float tem
     // Initialize deltas
     float delta_rear_brake = rear_brake_work(s_real, h, v_start, v_end, time, mass, wheelbase);
     float delta_front_brake = front_brake_work(s_real, h, v_start, v_end, time, mass, wheelbase);
+    float delta_engine = s_real;
+    if(s_real == 0){
+        delta_engine = 5
+    }
     
     // Update cumulative values
     perf_data.s_rear_tire += delta_rear_brake;
@@ -169,8 +177,8 @@ void performance_with_brake_update(float s_real, float h, float v_end, float tem
     perf_data.s_rear_brake_pad += delta_rear_brake;
     perf_data.s_front_brake_pad += delta_front_brake;
     perf_data.s_chain_or_cvt += delta_rear_brake;
-    perf_data.s_engine_oil += count_s_oil(s_real, temp_machine);
-    perf_data.s_engine += s_real;
+    perf_data.s_engine_oil += count_s_oil(s_real, h, temp_machine, v_start, v_end);
+    perf_data.s_engine += delta_engine;
     perf_data.s_air_filter += s_real;
     
     // Update statistics
